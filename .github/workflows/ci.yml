@@ -14,8 +14,8 @@ jobs:
         python: ["3.9", "3.13"]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10
       - name: Test without Pygments
         run: uv run --python ${{ matrix.python }} --no-project --with pytest python -m pytest -q tests
       - name: Test with Pygments
