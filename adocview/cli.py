@@ -61,7 +61,12 @@ def main(argv=None) -> int:
     if not interactive:
         return print_document(source, args)
 
-    from .tui import Viewer
+    try:
+        from .tui import Viewer
+    except ImportError:  # no termios (Windows): the pager needs a Unix terminal
+        print("adoc: the interactive viewer needs macOS or Linux (WSL works); printing instead",
+              file=sys.stderr)
+        return print_document(source, args)
     try:
         Viewer(source, max_width=args.width, mouse=not args.no_mouse,
                font_size=args.font_size).run()

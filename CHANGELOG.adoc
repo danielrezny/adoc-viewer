@@ -1,0 +1,14 @@
+= Changelog
+
+== 0.1.0
+
+First public release.
+
+* Full-screen viewer with a table of contents, a search box that searches as
+  you type, live reload, mouse support, line selection with copy to the
+  clipboard, whole-window or column width, and font size control in Apple
+  Terminal.
+* Print mode for pipes, with or without colors.
+* Rendering of headers, sections, inline formatting, lists, source blocks
+  with optional Pygments highlighting, admonitions, quotes, sidebars, tables,
+  footnotes, attributes, includes and conditionals.

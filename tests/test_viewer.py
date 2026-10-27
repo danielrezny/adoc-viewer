@@ -270,3 +270,10 @@ def test_search_box_live_search_and_navigation():
     v.handle("/")
     v.handle("p")  # typing replaces the remembered query
     assert v.search_input == "p"
+
+
+def test_listing_subs_attributes():
+    doc = doc_of(":repo: https://x.org/r\n\n[source,sh,subs=attributes]\n----\ngit clone {repo}\n----"
+                 "\n\n----\nkeep {repo}\n----")
+    assert doc.blocks[0].lines == ["git clone https://x.org/r"]
+    assert doc.blocks[1].lines == ["keep {repo}"]

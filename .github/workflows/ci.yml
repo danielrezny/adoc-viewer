@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ["3.9", "3.13"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Test without Pygments
+        run: uv run --python ${{ matrix.python }} --no-project --with pytest python -m pytest -q tests
+      - name: Test with Pygments
+        run: uv run --python ${{ matrix.python }} --no-project --with pytest --with pygments python -m pytest -q tests
+      - name: Build and run the installed command
+        run: |
+          uv build
+          uv run --python ${{ matrix.python }} --isolated --with dist/*.whl adoc -p --color never README.adoc > /dev/null

@@ -343,6 +343,10 @@ class Parser:
     def _finish(self, block: Node, attrs: BlockAttrs) -> Node:
         if attrs.title and block.title is None:
             block.title = self.subst(attrs.title)
+        if isinstance(block, Listing):
+            subs = [v.strip() for v in attrs.named.get("subs", "").split(",")]
+            if any(v.strip("+") == "attributes" for v in subs):
+                block.lines = [self.subst(line) for line in block.lines]
         if attrs.id:
             block.id = attrs.id
             self.ids.setdefault(attrs.id, attrs.reftext or block.title or attrs.id)
