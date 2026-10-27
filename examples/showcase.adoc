@@ -1,0 +1,162 @@
+= AsciiDoc Showcase
+Ada Lovelace <ada@example.com>
+v1.2, 2026-10-08: Everything the viewer can render
+:toc:
+:sectnums:
+:product: adoc viewer
+:url-asciidoc: https://asciidoc.org
+
+This document exercises most of the syntax supported by *{product}*.
+It is written in https://asciidoc.org[AsciiDoc], a plain-text format
+for writing technical documentation.footnote:[Asciidoctor is the reference implementation.]
+
+== Inline formatting
+
+You can write *bold*, _italic_, `monospace`, *_bold italic_*, #highlighted#
+and [.underline]#underlined# or [.line-through]#struck# text.
+Unconstrained formatting works mid-word: **Ex**ample and __un__believable.
+Chemistry needs subscripts like H~2~O, and math needs superscripts like E=mc^2^.
+
+Typographic replacements: (C) (R) (TM), an em dash -- like this, an ellipsis...
+and arrows -> <- => <=. Smart "`double`" and '`single`' quotes, and it's an apostrophe.
+
+Links: {url-asciidoc}[AsciiDoc home], a bare URL https://github.com/asciidoctor,
+an email ada@example.com, and a cross reference to <<_lists>> or <<tables,the tables section>>.
+
+Keyboard: press kbd:[Ctrl+Shift+P], click btn:[Save], go to menu:File[Export > PDF].
+
+Hard line breaks +
+keep this on its own line.
+
+== Lists
+
+* Unordered item
+* Another item with `code`
+** Nested item
+*** Deeper still
+* Back to the top level
+
+. First step
+. Second step
+.. Sub-step a
+.. Sub-step b
+. Third step
+
+.Shopping checklist
+* [x] Milk
+* [ ] Bread
+* [*] Eggs
+
+CPU:: The brain of the computer.
+RAM::
+Short-term memory that is cleared when power is lost.
+Storage:: Long-term memory.
+SSD::: Fast storage.
+HDD::: Spinning disks.
+
+. A list item with an attached block
++
+[source,bash]
+----
+echo "attached with a list continuation"
+----
+. And the next item
+
+== Blocks
+
+[source,python]
+.hello.py
+----
+def greet(name: str) -> str:
+    """Return a friendly greeting."""
+    return f"Hello, {name}!"  # <1>
+
+print(greet("world"))  # <2>
+----
+<1> Builds the greeting.
+<2> Prints it.
+
+....
+A literal block
+   preserves    spacing exactly.
+....
+
+NOTE: This is a note admonition with *formatting*.
+
+TIP: Tips are green.
+
+[WARNING]
+.Mind the gap
+====
+Warnings can contain multiple blocks.
+
+* Even lists
+====
+
+IMPORTANT: Don't forget the semicolon.
+
+CAUTION: Hot surface.
+
+[quote, Albert Einstein, On Science]
+____
+Imagination is more important than knowledge.
+____
+
+[verse, Carl Sandburg, Fog]
+____
+The fog comes
+on little cat feet.
+____
+
+.A sidebar
+****
+Sidebars hold content that is tangential to the main text.
+****
+
+.Example title
+====
+An example block with a title gets a caption.
+====
+
+'''
+
+image::images/diagram.png[Architecture diagram]
+
+[[tables]]
+== Tables
+
+.Feature support
+[cols="1,3,^1",options="header"]
+|===
+|Feature |Description |Status
+
+|Tables
+|Column widths are computed from content and wrapped to fit the terminal.
+|✓
+
+|Code
+|Syntax highlighting via Pygments when it is installed.
+|✓
+
+|Images
+|Shown as placeholders with their alt text.
+|~
+|===
+
+[%header,format=csv]
+|===
+Name,Language,Stars
+Asciidoctor,Ruby,4800
+AsciidoctorJ,Java,600
+|===
+
+== Conditional content
+
+ifdef::product[]
+The `product` attribute is set, so this paragraph is visible.
+endif::[]
+ifndef::product[]
+This paragraph is hidden.
+endif::[]
+
+include::partials/included.adoc[leveloffset=+1]

@@ -1,0 +1,5 @@
+= Included section
+
+This section lives in `partials/included.adoc` and was pulled in with
+`include::` and `leveloffset=+1`. Edit it while the viewer is open and the
+change appears immediately.

@@ -1,0 +1,128 @@
+= adoc — AsciiDoc viewer for the terminal
+:toc:
+
+`adoc` renders https://asciidoc.org[AsciiDoc] documents in your terminal, in the
+spirit of Markdown viewers like leaf and glow. It runs as a full-screen pager
+with a table of contents, search and live reload, or prints straight to stdout.
+
+== Features
+
+* Headings, inline formatting (*bold*, _italic_, `mono`, #highlight#, sub/superscript),
+  typographic replacements, links (clickable via OSC 8 and mouse) and cross references
+* Ordered, unordered, nested, checklist, description and callout lists
+* Source blocks with syntax highlighting (when Pygments is installed), callouts
+  and `linenums`
+* Literal, quote, verse, sidebar, example, open and passthrough blocks
+* Admonitions (`NOTE:`, `TIP:`, `IMPORTANT:`, `WARNING:`, `CAUTION:`)
+* Tables with column specs, alignment, implicit/explicit headers, colspans,
+  `a|` AsciiDoc cells, and CSV/DSV formats; widths fit the terminal
+* Document attributes, `{attribute}` references, counters, `:toc:`, `:sectnums:`
+* Status placeholders shown as emoji: `\{yes}` ✅, `\{no}` ❌, `\{partial}` 🟡, `\{maybe}` ❓,
+  `\{na}` ➖, `\{wip}` 🚧, `\{todo}` 📝 and a few more (a document's own definition wins)
+* Preprocessor: `include::` (with `lines=`, `tag=`, `leveloffset=`, `indent=`)
+  and `ifdef`/`ifndef`/`ifeval`
+* Footnotes, images (shown as placeholders), thematic and page breaks
+* Live reload whenever the file or any included file changes
+
+== Install
+
+Requires Python 3.9+. No dependencies; Pygments is optional, for syntax highlighting.
+
+[source,sh]
+----
+uv tool install '.[highlight]'      # or: pipx install '.[highlight]'
+----
+
+Run it from this directory, or pass the path (`uv tool install '/path/to/adoc-viewer[highlight]'`).
+The package isn't on PyPI: `uv tool install adoc` installs an unrelated package that happens
+to be called `adoc`.
+
+Or run it without installing:
+
+[source,sh]
+----
+python3 -m adocview README.adoc
+----
+
+== Usage
+
+[source,sh]
+----
+adoc README.adoc                 # interactive viewer
+adoc -p README.adoc              # print to stdout
+adoc -p README.adoc | less -R    # page with less, colors kept when forced:
+adoc -p --color always README.adoc | less -R
+cat doc.adoc | adoc              # read from stdin
+adoc -a product=Foo doc.adoc     # set attributes
+adoc -w 100 doc.adoc             # limit the text width (default: the whole window)
+adoc -f 18 doc.adoc              # bigger font while viewing (Apple Terminal)
+----
+
+=== Keys
+
+[cols="1,2"]
+|===
+|Key |Action
+
+|kbd:[j] / kbd:[k], arrows |Scroll a line
+|kbd:[Space] / kbd:[b], kbd:[PgDn] / kbd:[PgUp] |Scroll a page
+|kbd:[d] / kbd:[u] |Scroll half a page
+|kbd:[g] / kbd:[G] |Top / bottom
+|kbd:[\]] / kbd:[[] |Next / previous section
+|kbd:[t] |Toggle the table of contents; kbd:[Tab] switches focus
+|kbd:[w] |Full window width / a narrower column (100, or the `-w` value)
+|kbd:[/] or kbd:[Ctrl+F] |Open the search box: searches as you type (smart case); kbd:[Enter] / kbd:[↓] next, kbd:[↑] previous, kbd:[Esc] closes
+|kbd:[n] / kbd:[N] |Next / previous match after the box is closed; kbd:[Esc] clears the highlights
+|kbd:[e] |Open the file in `$EDITOR`, reload when it closes
+|kbd:[r] |Reload
+|kbd:[+] / kbd:[-], kbd:[0] |Bigger / smaller font, back to the original size
+|kbd:[v], then kbd:[j] / kbd:[k] |Select lines
+|kbd:[y] or kbd:[Enter] |Copy the selected lines to the clipboard
+|kbd:[m] |Mouse capture on / off (while on, hold kbd:[fn] or kbd:[⌥] to select)
+|kbd:[?] |Help
+|kbd:[q] |Quit
+|===
+
+=== Font size
+
+Programs can't change a terminal's font through escape sequences, so in
+Apple Terminal `adoc` asks Terminal through AppleScript. It changes only its
+own tab, keeps the window the same size so the text reflows, and restores the
+original size when you quit. The first time, macOS may ask whether Terminal may
+control Terminal. In other terminals kbd:[+] reminds you of the terminal's own
+zoom keys (`⌘+` / `⌘-` in iTerm2 and most macOS terminals); the
+viewer reflows to the new size either way.
+
+=== Mouse and copying text
+
+The viewer captures the mouse, so the wheel scrolls and you can click entries
+in the table of contents, cross references and links. To select text with the
+mouse anyway, hold a modifier while dragging: kbd:[fn] in Apple Terminal,
+kbd:[⌥] in iTerm2, kbd:[Shift] in most other terminals. kbd:[m] (or
+`--no-mouse`) releases the mouse entirely; then a plain drag selects, but in
+some terminals, Apple Terminal included, the wheel stops scrolling.
+
+Or copy with the keyboard: press kbd:[v], extend the selection with kbd:[j] /
+kbd:[k] (or page keys), and press kbd:[y]. The copied text leaves out
+code-block frames, quote and admonition bars, and trailing spaces, so a
+selected source block pastes as plain code. It uses `pbcopy`, `wl-copy`,
+`xclip` or `xsel`, and otherwise asks the terminal through OSC 52.
+
+== Development
+
+[source,sh]
+----
+uv run --with pytest --with pygments --no-project python -m pytest tests
+python3 -m adocview examples/showcase.adoc
+----
+
+`examples/showcase.adoc` exercises most of the supported syntax.
+
+=== Layout
+
+[horizontal]
+`preprocess.py`:: includes and conditionals
+`parser.py`:: block parser producing a small document tree
+`inline.py`:: inline markup to styled segments
+`render.py`:: tree to wrapped, styled lines for a given width
+`tui.py`:: the full-screen viewer (raw ANSI, no curses)
