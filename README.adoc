@@ -116,7 +116,7 @@ Press kbd:[?] in the viewer to see every key.
 2+h|View
 |kbd:[w] |Whole window width / narrower column
 |kbd:[+] / kbd:[-], kbd:[0] |Bigger / smaller font, original size
-|kbd:[e] |Edit the file in `$VISUAL` / `$EDITOR`
+|kbd:[e] |Edit the file in your terminal editor
 |kbd:[r] |Reload (also happens automatically when a file changes)
 |kbd:[q] |Quit
 |===
@@ -136,6 +136,22 @@ kbd:[k] or the page keys, and press kbd:[y]. The copied text leaves out
 code-block frames, quote and admonition bars, and trailing spaces, so a
 selected source block pastes as plain code. Copying uses `pbcopy`, `wl-copy`,
 `xclip` or `xsel`, and falls back to asking the terminal (OSC 52).
+
+=== Editing
+
+kbd:[e] opens the document in your terminal editor: the one named by
+`$VISUAL`, otherwise `$EDITOR`, otherwise `vi`. The viewer steps aside while
+the editor runs and shows the saved changes when you quit it. The editor
+starts at the top of the file, not at the part you were reading. To use
+another editor, set the variable in your shell profile:
+
+[source,sh]
+----
+export EDITOR=nano          # or vim, nvim, hx, micro, ...
+export VISUAL="code --wait" # a GUI editor must wait until the file is closed
+----
+
+Editing is not available when the document comes from stdin.
 
 === Font size
 
@@ -195,7 +211,6 @@ tables. A document's own definition of these names wins.
 * Images are shown as a placeholder with their alt text and path.
 * Cells that span several rows are laid out as if they spanned one.
 * Two-line (underlined) section titles from older AsciiDoc are not recognized.
-* kbd:[e] opens the editor at the top of the file.
 
 If a document renders wrongly, please open an issue with a small sample.
 
